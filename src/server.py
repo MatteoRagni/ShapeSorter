@@ -1,7 +1,26 @@
 import socketserver
 import json
-import threading
+from threading import Thread
+#
+#import time
+#import threading
+#
+#def main():
+#    thread = Worker(None)
+#    thread.start()
+#
+#class Worker(threading.Thread):
+#
+#    def __init__(self, args):
+#        self.args = args
+#        threading.Thread.__init__(self)
+#
+#    def run(self):
+#        print("Starting worker")
+#        ...
+#        print("Finishing worker")
 
+### Helpers ###
 def _parser(js):
     response = {'state': 200, 'message': 'OK'}
     # Initial check on type and target
@@ -86,8 +105,8 @@ def _check_list(obj, size):
         return False
     return True
 
+### UDP Handler for Server connections ###
 class UDPHandler(socketserver.BaseRequestHandler):
-
     def handle(self):
         response = {'response': 'ok'}
         data = self.request[0].strip()
@@ -97,9 +116,12 @@ class UDPHandler(socketserver.BaseRequestHandler):
         response = _parser(json.loads(data.decode()))
         socket.sendto((json.dumps(response)).encode(), self.client_address)
 
-
-
-if __name__ == "__main__":
+def _server():
     HOST, PORT = "localhost", 9999
     server = socketserver.UDPServer((HOST, PORT), UDPHandler)
     server.serve_forever()
+
+def server():
+    th = Thread(target = _server)
+    th.start()
+    th.join()

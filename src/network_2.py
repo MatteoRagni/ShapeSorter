@@ -1,18 +1,31 @@
-#import socketserver
-import socket
-import pickle
+import socketserver
 import json
-import bge
+import threading
 
-#server = None
-HOST, PORT = 'localhost', 9999
+#import time
+#import threading
+#
+#def main():
+#    thread = Worker(None)
+#    thread.start()
+#
+#class Worker(threading.Thread):
+#
+#    def __init__(self, args):
+#        self.args = args
+#        threading.Thread.__init__(self)
+#
+#    def run(self):
+#        print("Starting worker")
+#        ...
+#        print("Finishing worker")
 
 ### Helpers ###
 def _parser(js):
     response = {'state': 200, 'message': 'OK'}
     # Initial check on type and target
     if not js:
-        response['state'] = 404
+        respons['state'] = 404
         response['error'] = 'Invalid json received'
         return response
     try:
@@ -92,52 +105,25 @@ def _check_list(obj, size):
         return False
     return True
 
-
 ### UDP Handler for Server connections ###
-#class UDPHandler(socketserver.BaseRequestHandler):
-#    def handle(self):
-#        response = {'response': 'ok'}
-#        data = self.request[0].strip()
-#        socket = self.request[1]
-#        print("{} wrote:".format(self.client_address[0]))
-#        # print(data)
-#        response = _parser(json.loads(data.decode()))
-#        socket.sendto((json.dumps(response)).encode(), self.client_address)
-
-#def _server():
-    #own = (bge.logic.getCurrentController()).owner
-    #if 'init' not in own:
-    #    own['init'] = True
-    #    HOST, PORT = "localhost", 9999
-    #    server = socketserver.UDPServer((HOST, PORT), UDPHandler)
-    #server.serve_forever()
-#    HOST, PORT = "localhost", 9999
-#    server = socketserver.UDPServer((HOST, PORT), UDPHandler)
-#    server.timeout = 10
-#    server.handle_request()
-
-class Server:
-    def __init__(self, host = 'localhost', port = 9999):
-        self.addr = (host, port)
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.socket.setblocking(False)
-        self.socket.bind(self.addr)
-
-    def handle(self, addr, data):
+class UDPHandler(socketserver.BaseRequestHandler):
+    def handle(self):
         response = {'response': 'ok'}
+        data = self.request[0].strip()
+        socket = self.request[1]
+        print("{} wrote:".format(self.client_address[0]))
         # print(data)
         response = _parser(json.loads(data.decode()))
-        print(response)
-#        self.socket.sendto((json.dumps(response)).encode())
+        socket.sendto((json.dumps(response)).encode(), self.client_address)
 
-    def receive(self):
-        while True:
-            try:
-                data, addr = self.socket.recvfrom(1024)
-                self.handle(addr, data)
-            except socket.error:
-                break
-server = Server()
-def serve():
-    server.receive()
+class ThreadedUDPServer(socketserver.ThreadingMixIn, socketserver.UDPServer):
+    pass
+
+def _server():
+    HOST, PORT = "localhost", 9999
+    server = ThreadedUDPServer((HOST, PORT), UDPHandler)
+    server.serve_forever()
+    server_thread = threading.Thread(target=server.serve_forever)
+    server_thread.daemon = True
+    server_thread.start()
+    server.shutdown()

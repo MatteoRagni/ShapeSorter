@@ -24,8 +24,7 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 # As you can see, there is no connect() call; UDP has no connections.
 # Instead, data is directly sent to the recipient via sendto().
 for data in data_list:
-    sock.sendto(bytes(data + "\n", "utf-8"), (HOST, PORT))
-    received = str(sock.recv(1024), "utf-8")
-
-    print("Sent:     {}".format(data))
+    #print(data)
+    sock.sendto(bytes(data, "utf-8"), (HOST, PORT))
+    received = str(sock.recvfrom(1024), "utf-8")
     print("Received: {}".format(received))

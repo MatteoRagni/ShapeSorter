@@ -8,10 +8,10 @@ HOST, PORT = "localhost", 9999
 data_list = [
   json.dumps({"a": "4"}),
   json.dumps({"com": "screenshot"}),
-  json.dumps({"com": "screenshot", "val": "filename"}),                # correct
+  json.dumps({"com": "screenshot", "val": "test_image"}),                # correct
   json.dumps({"com": "position", "val": "lksdnl"}),
   json.dumps({"com": "position", "val": [0,0,0,0]}),
-  json.dumps({"com": "position", "val": [0,0]}),                       # correct
+  json.dumps({"com": "position", "val": [1,1]}),                       #
   json.dumps({"com": "grasp", "val": [1,2,3]}),
   json.dumps({"com": "grasp", "val": "fskdjn"}),
   json.dumps({"com": "grasp", "val": 0}),                              # correct

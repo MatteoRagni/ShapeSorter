@@ -12,19 +12,40 @@ def _position(val):
     if len(val) != 2: return False
     scene = bge.logic.getCurrentScene()
     robot = scene.objects["Robot"]
-    robot.worldPosition[0] = val[0]
-    robot.worldPosition[1] = val[1]
+    robot['x_fin'] = val[0]
+    robot['y_fin'] = val[1]
     return True
+
+def _exec_move():
+    scene = bge.logic.getCurrentScene()
+    robot = scene.objects["Robot"]
+    x_pos = robot['x_pos']
+    y_pos = robot['y_pos']
+    x_fin = robot['x_fin']
+    y_fin = robot['y_fin']
+    x_err = x_fin - x_pos
+    y_err = y_fin - y_pos
+    if (x_err**2 + y_err**2) > 1e-2:
+        robot.worldPosition[0] += (1 if x_err >= 0 else -1) * 0.02
+        robot.worldPosition[1] += (1 if y_err >= 0 else -1) * 0.02
+        if robot['Target'] != '':
+            target = scene.objects[robot['Target']]
+            if target['solved'] == 0:
+                target.worldPosition[0] = robot.worldPosition[0]
+                target.worldPosition[1] = robot.worldPosition[1]
 
 def _screenshot(val):
     if not isinstance(val, str): return False
     print("Making screenshot in %s" % val)
+    bge.render.makeScreenshot("//" + val)
     return True
 
 def _grasp(val):
     if val == 0:
+        ((bge.logic.getCurrentController()).owner)['Grasp'] = False
         print("Releasing grasping")
     else:
+        ((bge.logic.getCurrentController()).owner)['Grasp'] = True
         print("Trying grasping")
     return True
 
@@ -92,5 +113,8 @@ class Server:
 # Actually executed commands every frame
 server = Server()
 
-def serve():
+def serve(cont):
+    cont.owner['x_pos'] = cont.owner.worldPosition[0]
+    cont.owner['y_pos'] = cont.owner.worldPosition[1]
     server.receive()
+    _exec_move()

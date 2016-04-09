@@ -4,7 +4,7 @@ import bge
 vertex_shader = """
 varying double DEPTH;
 
-uniform double FARPLANE = 14.0;  // send this in as a uniform to the shader
+uniform double FARPLANE = 0.6;  // send this in as a uniform to the shader
 
 void main() {
     gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
@@ -15,13 +15,10 @@ fragment_shader = """
 varying double DEPTH;
 
 void main() {
-    // float m = 1.75;
-    float m = 1.90;
-    // float q = 0.0;
-    float q = 0;
+    float m = 0.8;
+    float q = -0.85;
 
     // far things appear white, near things black
-    //float val = (1-DEPTH) * 1.75;
     float val = m * (1-DEPTH) + q;
     gl_FragColor.rgb = vec3(val, val, val);
 }
@@ -36,6 +33,7 @@ def enable_depth():
                 if shader != None:
                     if not shader.isValid():
                         shader.setSource(vertex_shader, fragment_shader, 1)
+    return True
 
 def disable_depth():
     scene = bge.logic.getCurrentScene()
@@ -45,3 +43,17 @@ def disable_depth():
                 shader = mat.getShader()
                 if shader != None:
                     shader.delSource()
+    return False
+
+def toggle_depth(cont):
+    scene = bge.logic.getCurrentScene()
+    if scene.active_camera.name == 'Isometric':
+        if (cont.owner)['depth'] == True:
+            (cont.owner)['depth'] = disable_depth()
+        else:
+            (cont.owner)['depth'] = enable_depth()
+
+def toggle_depth_keyboard(cont):
+    for k, f in cont.sensors['depth_sensor'].events:
+        if f == bge.logic.KX_INPUT_JUST_ACTIVATED:
+            toggle_depth(cont)

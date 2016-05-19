@@ -49,6 +49,14 @@ def _grasp(val):
         print("Trying grasping")
     return True
 
+def _moveit(val):
+    scene = bge.logic.getCurrentScene()
+    target = scene.objects[val["name"]]
+    target.worldPosition[0] = val["x"]
+    target.worldPosition[1] = val["y"]
+    target.worldPosition[2] = 0.38
+    return True 
+
 ## Parser method
 def _parser(js):
     if 'com' not in js:
@@ -65,6 +73,8 @@ def _parser(js):
         ret = _screenshot(val)
     elif com == 'grasp':
         ret = _grasp(val)
+    elif com == 'moveit':
+        ret = _moveit(val)
     else:
         return "Err: command unknown"
     #############################

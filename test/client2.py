@@ -6,16 +6,22 @@ import json
 
 HOST, PORT = "localhost", 9999
 data_list = [
-  json.dumps({"a": "4"}),
-  json.dumps({"com": "screenshot"}),
-  json.dumps({"com": "screenshot", "val": "test_image"}),                # correct
-  json.dumps({"com": "position", "val": "lksdnl"}),
-  json.dumps({"com": "position", "val": [0,0,0,0]}),
-  json.dumps({"com": "position", "val": [1,1]}),                       #
-  json.dumps({"com": "grasp", "val": [1,2,3]}),
-  json.dumps({"com": "grasp", "val": "fskdjn"}),
-  json.dumps({"com": "grasp", "val": 0}),                              # correct
-  json.dumps({"com": "grasp", "val": 1})                               # correct
+  #json.dumps({"a": "4"}),
+  #json.dumps({"com": "screenshot"}),
+  #json.dumps({"com": "screenshot", "val": "test_image"}),                # correct
+  #json.dumps({"com": "position", "val": "lksdnl"}),
+  #json.dumps({"com": "position", "val": [0,0,0,0]}),
+  #json.dumps({"com": "position", "val": [1,1]}),                       #
+  #json.dumps({"com": "grasp", "val": [1,2,3]}),
+  #json.dumps({"com": "grasp", "val": "fskdjn"}),
+  #json.dumps({"com": "grasp", "val": 0}),                              # correct
+  #json.dumps({"com": "grasp", "val": 1})                               # correct
+  json.dumps({"com": "moveit", 
+              "val": { "name": "l3", "x": 1.2, "y": -1.2 }}),
+  json.dumps({"com": "moveit", 
+              "val": { "name": "l4", "x": 0, "y": 0 }}),
+  json.dumps({"com": "moveit", 
+              "val": { "name": "l5", "x": -2.4, "y": 1.2 }}),
 ]
 # SOCK_DGRAM is the socket type to use for UDP sockets
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)

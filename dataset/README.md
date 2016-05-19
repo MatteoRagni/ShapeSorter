@@ -14,4 +14,4 @@ sorter. The configurations are:
 
 All permutation are mapped into the pickle object and the json object.
 
-[Reference](ref/REFERENCE.png)
+![Reference](ref/REFERENCE.png)
